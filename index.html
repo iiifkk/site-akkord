@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ремонт Центр</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-sans bg-gray-50 text-gray-900", 
+    background-image: url(C:\Users\iiifkk\Desktop\site\fon2.png);  
+    background-attachment: fixed;  
+
+>
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 flex flex-col sm:flex-row justify-between items-center px-4 sm:px-6 py-3">
+    <div class="text-lg font-bold">ЛОГОТИП</div>
+    <div class="text-sm text-center sm:text-left">
+      <p>mail@mail.ru</p>
+      <p>+7 123 456 78 90</p>
+    </div>
+    <button onclick="scrollToForm()" class="bg-blue-600 text-white px-3 py-2 rounded-xl mt-2 sm:mt-0">
+      Оставить заявку
+    </button>
+  </header>
+
+  <main class="pt-32 px-4">
+    <!-- Hero -->
+    <section class="text-center my-6 sm:my-10">
+      <h1 class="text-2xl sm:text-3xl font-bold">Ремонт мелкой и крупной, машин и устройств</h1>
+    </section>
+
+    <!-- Форма -->
+    <section id="formSection" class="max-w-xl mx-auto my-6 sm:my-10 p-4 sm:p-6 bg-white rounded-xl shadow-md">
+      <form id="repairForm" class="space-y-4" enctype="multipart/form-data">
+        <input name="phone" type="tel" required placeholder="Номер телефона" class="w-full p-2 border rounded" />
+        <input name="device" required placeholder="Название устройства" class="w-full p-2 border rounded" />
+        <textarea name="description" required placeholder="Описание проблемы" class="w-full p-2 border rounded"></textarea>
+        <input name="photo" type="file" accept="image/*" class="w-full p-2 border rounded" />
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-xl w-full">
+          Отправить
+        </button>
+      </form>
+    </section>
+
+    <!-- Как мы работаем -->
+    <section class="max-w-xl mx-auto my-10">
+      <h2 class="text-xl sm:text-2xl font-semibold mb-4">Как мы работаем</h2>
+      <ol class="list-decimal list-inside space-y-1 text-sm sm:text-base">
+        <li>Клиент приносит технику</li>
+        <li>Бесплатная диагностика</li>
+        <li>Называем цену</li>
+        <li>Чиним</li>
+        <li>Вы забираете</li>
+      </ol>
+    </section>
+
+    <!-- Преимущества -->
+    <section class="max-w-xl mx-auto my-10">
+      <h2 class="text-xl sm:text-2xl font-semibold mb-4">Наши преимущества</h2>
+      <ul class="space-y-2 text-sm sm:text-base">
+        <li>🔧 Бесплатная диагностика</li>
+        <li>⏱️ Ремонт за 1–3 дня</li>
+        <li>💰 Прозрачные цены</li>
+        <li>🔋 Гарантия 3 месяца</li>
+      </ul>
+    </section>
+
+    <!-- Контакты -->
+    <section class="max-w-xl mx-auto my-10 text-sm sm:text-base">
+      <h2 class="text-xl font-semibold">Контакты</h2>
+      <p>Телефон: +7 123 456 78 90</p>
+      <p>г. Ессентуки, ул. Коломейцева 2</p>
+      <p>График работы: с 8 до 17</p>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-200 text-center p-4 text-sm">
+    <p>Телефон: +7 123 456 78 90</p>
+    <p>г. Ессентуки, ул. Коломейцева 2</p>
+    <p>&copy; 2025 Ремонт Центр</p>
+  </footer>
+
+  <!-- JS -->
+  <script>
+    function scrollToForm() {
+      document.getElementById('formSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.getElementById('repairForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const phone = form.phone.value;
+      const device = form.device.value;
+      const description = form.description.value;
+      const file = form.photo.files[0];
+
+      const instanceId = 'ВАШ_ID'; // например: 1101222233
+      const token = 'ВАШ_TOKEN'; // например: a1b2c3d4e5f6g7h8
+      const chatId = '71234567890@c.us';
+
+      const messageText = `Заявка на ремонт:\nТелефон: ${phone}\nУстройство: ${device}\nОписание: ${description}`;
+
+      // 1. Отправка текста
+      await fetch(`https://api.green-api.com/waInstance${instanceId}/sendMessage/${token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chatId, message: messageText }),
+      });
+
+      // 2. Отправка файла (если есть)
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('chatId', chatId);
+        formData.append('caption', `Фото к заявке на ремонт`);
+
+        await fetch(`https://api.green-api.com/waInstance${instanceId}/sendFileByUpload/${token}`, {
+          method: 'POST',
+          body: formData
+        });
+      }
+
+      alert('Заявка отправлена!');
+      form.reset();
+    });
+  </script>
+</body>
+</html>
